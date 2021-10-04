@@ -12,7 +12,8 @@ module.exports = {
     },
 
     async index(req, res) {
-        const clients = await Clients.findAll();
+        const { company_id } = req.params;
+        const clients = await Clients.findAll({where: {company_id: company_id}});
 
         return res.json(clients);
     },
@@ -24,7 +25,7 @@ module.exports = {
         const user = await User.findByPk(company_id);
 
         if (!user) {
-            return res.status(400).json({ error: 'Uuário não encontrado' });
+            return res.status(400).json({ error: 'Usuário não encontrado' });
         }
 
         const client = await Clients.create({

@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const { Op } = require('sequelize');
+
 
 module.exports = {
 
@@ -17,15 +19,20 @@ module.exports = {
         return res.json(user);
     },
 
-    async login(req,res) {
+    async login(req, res) {
         const {email, password} = req.body;
-        const user = await User.findOne({  where: {
-            [Op.and]: [
-              { email: email },
-              { password: password }
-            ]
-          }});
 
-          return res.json(user);
+          const user = await User.findOne({ where: {email: email}});
+
+        let resp = {};
+          if (user && user.dataValues.password === password) {
+              resp.id = user.dataValues.id;
+              resp.name = user.dataValues.name;
+              resp.status = true;
+          } else {
+              resp.status = false;
+          }
+
+          return res.json(resp);
     }
 };
